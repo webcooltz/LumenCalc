@@ -4,6 +4,12 @@ A calculator for Android and the browser, built with plain HTML, CSS and JavaScr
 
 **Version 0.1.1.** Early release. The web app is tested in the browser; the Android build, including saving files to `Documents/LumenCalc`, has not been tested on a real device yet.
 
+| Calculator | Unit converter | Code | Settings |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/calculator.jpg" width="200" alt="Calculator with history, algebra results and a live preview"> | <img src="docs/screenshots/converter.jpg" width="200" alt="Unit converter turning 150 pounds into kilograms"> | <img src="docs/screenshots/code.jpg" width="200" alt="JavaScript scratchpad showing a list of primes"> | <img src="docs/screenshots/settings.jpg" width="200" alt="Settings with the save folder and About card"> |
+
+*Screenshots are the browser build at phone size.*
+
 ## What it does
 
 - **Calculator.** Type full expressions with parentheses: `2(3+4)^2`, `5!`, `sqrt(16)`, `sin(pi/2)`. Variables (`x = 5`), your own functions (`f(t) = t^2 + 1`) and `ans`. Algebra with `simplify(2x+3x)`, `derivative(x^3, x)` and `solve(x^2-4=0, x)` (polynomials up to degree 3). Radians or degrees.
