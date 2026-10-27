@@ -1,6 +1,6 @@
 // Builds every app icon from assets/icon-source.webp (a blue rounded-square icon on a white page).
 //   Android: legacy square + round + adaptive foreground per density, plus the adaptive background color
-//   Web:     www/icon.png (favicon and home-screen icon)
+//   Web:     www/icon.png (favicon and home-screen icon), docs/logo.png (README)
 // Run after changing the source:  npm run icons
 const fs = require("fs");
 const path = require("path");
@@ -93,6 +93,10 @@ const mask = (size, shape) =>
   );
 
   fs.writeFileSync(path.join(root, "www", "icon.png"), await masked(0.94, 192, "square"));
+
+  // Larger copy for the README.
+  fs.mkdirSync(path.join(root, "docs"), { recursive: true });
+  fs.writeFileSync(path.join(root, "docs", "logo.png"), await masked(0.94, 512, "square"));
 
   console.log("icons written. adaptive background", hex, "| source icon width", icon.w + "px");
 })().catch((e) => { console.error(e); process.exit(1); });

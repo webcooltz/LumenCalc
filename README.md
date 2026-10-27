@@ -1,4 +1,8 @@
-# LumenCalc
+<p align="center">
+  <img src="docs/logo.png" width="128" alt="LumenCalc logo">
+</p>
+
+<h1 align="center">LumenCalc</h1>
 
 A calculator for Android and the browser, built with plain HTML, CSS and JavaScript and wrapped for Android with [Capacitor](https://capacitorjs.com).
 
