@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -11,7 +11,7 @@
 <body>
   <div class="app">
     <header class="bar">
-      <button id="menu-btn" class="icon" aria-label="Open menu" aria-expanded="false">â˜°</button>
+      <button id="menu-btn" class="icon" aria-label="Open menu" aria-expanded="false">☰</button>
       <h1 id="title">Calculator</h1>
     </header>
 
@@ -47,11 +47,11 @@
         <button data-insert="sin(">sin</button>
         <button data-insert="cos(">cos</button>
         <button data-insert="tan(">tan</button>
-        <button data-insert="sqrt(">âˆš</button>
+        <button data-insert="sqrt(">√</button>
         <button data-insert="log(">ln</button>
         <button data-insert="log10(">log</button>
         <button data-insert="abs(">abs</button>
-        <button data-insert="pi">Ï€</button>
+        <button data-insert="pi">π</button>
         <button data-insert="e">e</button>
         <button data-insert="ans">ans</button>
         <button data-insert=" mod ">mod</button>
@@ -64,33 +64,33 @@
         <button data-action="clear" class="fn">AC</button>
         <button data-insert="(" class="fn">(</button>
         <button data-insert=")" class="fn">)</button>
-        <button data-insert="/" class="op">Ã·</button>
+        <button data-insert="/" class="op">÷</button>
 
         <button data-insert="7">7</button>
         <button data-insert="8">8</button>
         <button data-insert="9">9</button>
-        <button data-insert="*" class="op">Ã—</button>
+        <button data-insert="*" class="op">×</button>
 
         <button data-insert="4">4</button>
         <button data-insert="5">5</button>
         <button data-insert="6">6</button>
-        <button data-insert="-" class="op">âˆ’</button>
+        <button data-insert="-" class="op">−</button>
 
         <button data-insert="1">1</button>
         <button data-insert="2">2</button>
         <button data-insert="3">3</button>
         <button data-insert="+" class="op">+</button>
 
-        <button data-action="back" class="fn">âŒ«</button>
+        <button data-action="back" class="fn">⌫</button>
         <button data-insert="0">0</button>
         <button data-insert=".">.</button>
         <button data-action="equals" class="op eq">=</button>
       </div>
 
       <div class="caret-row">
-        <button data-action="left" class="fn">â—€</button>
-        <button data-action="keyboard" class="fn" id="kbd" title="Toggle system keyboard">âŒ¨</button>
-        <button data-action="right" class="fn">â–¶</button>
+        <button data-action="left" class="fn">◀</button>
+        <button data-action="keyboard" class="fn" id="kbd" title="Toggle system keyboard">⌨</button>
+        <button data-action="right" class="fn">▶</button>
       </div>
     </main>
 
@@ -101,12 +101,12 @@
         <div class="conv-row">
           <input id="conv-value" type="text" inputmode="decimal" value="1" autocomplete="off"
                  spellcheck="false" placeholder="Number or expression">
-          <button id="conv-sign" class="fn" title="Change sign">Â±</button>
+          <button id="conv-sign" class="fn" title="Change sign">±</button>
         </div>
         <select id="conv-from" aria-label="From unit"></select>
       </div>
 
-      <button id="conv-swap" class="swap" aria-label="Swap units">â‡…</button>
+      <button id="conv-swap" class="swap" aria-label="Swap units">⇅</button>
 
       <div class="conv-card">
         <label for="conv-to">To</label>
@@ -150,7 +150,7 @@
     <main id="view-settings" class="view settings" hidden>
       <section class="card">
         <h2>Save folder</h2>
-        <p id="set-folder-text" class="card-text">Checkingâ€¦</p>
+        <p id="set-folder-text" class="card-text">Checking…</p>
         <p id="set-folder-note" class="card-note"></p>
         <button id="set-folder-btn" class="primary-btn" hidden>Choose folder</button>
       </section>
@@ -189,7 +189,7 @@
 
       <details class="card">
         <summary>Open source libraries</summary>
-        <div id="set-libs" class="doc libs"><p class="card-note">Loadingâ€¦</p></div>
+        <div id="set-libs" class="doc libs"><p class="card-note">Loading…</p></div>
       </details>
     </main>
 
