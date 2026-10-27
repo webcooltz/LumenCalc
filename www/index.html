@@ -1,0 +1,212 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>LumenCalc</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="bar">
+      <button id="menu-btn" class="icon" aria-label="Open menu" aria-expanded="false">â˜°</button>
+      <h1 id="title">Calculator</h1>
+    </header>
+
+    <div id="drawer" class="drawer" hidden>
+      <div class="backdrop" data-close></div>
+      <nav class="panel" aria-label="Menu">
+        <h2>LumenCalc</h2>
+        <button data-view="calc">Calculator</button>
+        <button data-view="convert">Unit Converter</button>
+        <button data-view="code">Code</button>
+        <button data-view="settings">Settings</button>
+      </nav>
+    </div>
+
+    <!-- Calculator -->
+    <main id="view-calc" class="view calc">
+      <section id="history" class="history" aria-live="polite"></section>
+
+      <section class="entry">
+        <input id="expr" type="text" inputmode="none" autocomplete="off" autocapitalize="off"
+               autocorrect="off" spellcheck="false" enterkeyhint="done"
+               placeholder="e.g. 2(3+4)^2 or solve(x^2-4=0, x)">
+        <div id="preview" class="preview"></div>
+      </section>
+
+      <div class="chips" id="chips">
+        <button class="mode" id="angle" title="Angle mode">RAD</button>
+        <button data-insert="x">x</button>
+        <button data-insert="^">^</button>
+        <button data-insert="!">!</button>
+        <button data-insert=",">,</button>
+        <button data-insert="=">=</button>
+        <button data-insert="sin(">sin</button>
+        <button data-insert="cos(">cos</button>
+        <button data-insert="tan(">tan</button>
+        <button data-insert="sqrt(">âˆš</button>
+        <button data-insert="log(">ln</button>
+        <button data-insert="log10(">log</button>
+        <button data-insert="abs(">abs</button>
+        <button data-insert="pi">Ï€</button>
+        <button data-insert="e">e</button>
+        <button data-insert="ans">ans</button>
+        <button data-insert=" mod ">mod</button>
+        <button data-insert="simplify(">simplify</button>
+        <button data-insert="derivative(">d/dx</button>
+        <button data-insert="solve(">solve</button>
+      </div>
+
+      <div class="keys" id="keys">
+        <button data-action="clear" class="fn">AC</button>
+        <button data-insert="(" class="fn">(</button>
+        <button data-insert=")" class="fn">)</button>
+        <button data-insert="/" class="op">Ã·</button>
+
+        <button data-insert="7">7</button>
+        <button data-insert="8">8</button>
+        <button data-insert="9">9</button>
+        <button data-insert="*" class="op">Ã—</button>
+
+        <button data-insert="4">4</button>
+        <button data-insert="5">5</button>
+        <button data-insert="6">6</button>
+        <button data-insert="-" class="op">âˆ’</button>
+
+        <button data-insert="1">1</button>
+        <button data-insert="2">2</button>
+        <button data-insert="3">3</button>
+        <button data-insert="+" class="op">+</button>
+
+        <button data-action="back" class="fn">âŒ«</button>
+        <button data-insert="0">0</button>
+        <button data-insert=".">.</button>
+        <button data-action="equals" class="op eq">=</button>
+      </div>
+
+      <div class="caret-row">
+        <button data-action="left" class="fn">â—€</button>
+        <button data-action="keyboard" class="fn" id="kbd" title="Toggle system keyboard">âŒ¨</button>
+        <button data-action="right" class="fn">â–¶</button>
+      </div>
+    </main>
+
+    <!-- Unit converter -->
+    <main id="view-convert" class="view convert" hidden>
+      <div class="conv-card">
+        <label for="conv-value">From</label>
+        <div class="conv-row">
+          <input id="conv-value" type="text" inputmode="decimal" value="1" autocomplete="off"
+                 spellcheck="false" placeholder="Number or expression">
+          <button id="conv-sign" class="fn" title="Change sign">Â±</button>
+        </div>
+        <select id="conv-from" aria-label="From unit"></select>
+      </div>
+
+      <button id="conv-swap" class="swap" aria-label="Swap units">â‡…</button>
+
+      <div class="conv-card">
+        <label for="conv-to">To</label>
+        <div id="conv-result" class="conv-result" aria-live="polite">0</div>
+        <select id="conv-to" aria-label="To unit"></select>
+      </div>
+
+      <div id="conv-note" class="conv-note"></div>
+    </main>
+
+    <!-- Code (JavaScript scratchpad) -->
+    <main id="view-code" class="view code" hidden>
+      <div class="code-bar">
+        <select id="code-examples" aria-label="Examples"></select>
+        <button id="code-run" class="op">Run</button>
+      </div>
+      <div class="file-bar">
+        <span id="file-name" class="file-name">untitled</span>
+        <button id="file-open" class="small">Open</button>
+        <button id="file-save" class="small">Save</button>
+        <button id="file-saveas" class="small">Save as</button>
+      </div>
+      <textarea id="code-editor" spellcheck="false" autocomplete="off" autocapitalize="off"
+                autocorrect="off" aria-label="Code editor"></textarea>
+      <div class="code-keys" id="code-keys">
+        <button data-code="  ">Tab</button>
+        <button data-code="{}">{ }</button>
+        <button data-code="()">( )</button>
+        <button data-code="[]">[ ]</button>
+        <button data-code=";">;</button>
+        <button data-code="=">=</button>
+        <button data-code="&quot;&quot;">" "</button>
+        <button data-code="`">`</button>
+        <button data-code="=&gt;">=&gt;</button>
+      </div>
+      <div class="code-head"><span>Output</span><button id="code-clear" class="link">Clear</button></div>
+      <pre id="code-out" class="code-out" aria-live="polite"></pre>
+    </main>
+
+    <!-- Settings -->
+    <main id="view-settings" class="view settings" hidden>
+      <section class="card">
+        <h2>Save folder</h2>
+        <p id="set-folder-text" class="card-text">Checkingâ€¦</p>
+        <p id="set-folder-note" class="card-note"></p>
+        <button id="set-folder-btn" class="primary-btn" hidden>Choose folder</button>
+      </section>
+
+      <section class="card">
+        <h2>About</h2>
+        <dl class="about">
+          <div><dt>App</dt><dd>LumenCalc</dd></div>
+          <div><dt>Version</dt><dd id="set-version">0.1.0</dd></div>
+          <div><dt>Created</dt><dd>October 27, 2026</dd></div>
+          <div><dt>Includes</dt><dd>Calculator, unit converter, JavaScript scratchpad</dd></div>
+        </dl>
+      </section>
+
+      <details class="card">
+        <summary>Privacy policy</summary>
+        <div class="doc">
+          <p class="card-note">Last updated October 27, 2026</p>
+          <p><strong>LumenCalc does not collect your data.</strong> There are no accounts, ads, analytics or trackers, and the app does not send anything about you to us or anyone else.</p>
+          <h3>Everything stays on your device</h3>
+          <p>Calculations, conversions and the code you run are processed on your device. The app makes no network requests of its own and works offline.</p>
+          <h3>What is stored on your device</h3>
+          <ul>
+            <li>Your calculator history, variables and a few preferences (like degrees or radians), kept in the app's local storage. Clear the app's data in your device settings to erase them.</li>
+            <li>A draft of the code in the editor.</li>
+            <li>Files you choose to save, which go only to the LumenCalc folder you set under Save folder.</li>
+          </ul>
+          <h3>Permissions</h3>
+          <p>On Android, LumenCalc asks for storage access only so it can save and open your code files in the LumenCalc folder. It does not read other files.</p>
+          <h3>Code you write</h3>
+          <p>Code in the Code tab runs in a sandbox inside the app. If your own code makes a network request, that request is yours; LumenCalc does not add or monitor it.</p>
+          <h3>Changes</h3>
+          <p>If this policy changes, the new version will ship with an updated version number and date.</p>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary>Open source libraries</summary>
+        <div id="set-libs" class="doc libs"><p class="card-note">Loadingâ€¦</p></div>
+      </details>
+    </main>
+
+    <dialog id="sheet" class="sheet" aria-label="Files"></dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <input id="file-input" type="file" accept=".js,.mjs,.txt,text/*" hidden>
+  </div>
+
+  <script src="vendor/math.js"></script>
+  <script src="calc.js"></script>
+  <script src="units.js"></script>
+  <script src="app.js"></script>
+  <script src="convert.js"></script>
+  <script src="code.js"></script>
+  <script src="files.js"></script>
+  <script src="codefiles.js"></script>
+  <script src="settings.js"></script>
+  <script src="nav.js"></script>
+</body>
+</html>
