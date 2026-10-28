@@ -7,7 +7,9 @@ const vm = require("vm");
 const { JSDOM, VirtualConsole } = require("jsdom");
 const { fakeDir, memStore, fakeNativeFs } = require("./test-fakes");
 
-if (!fs.existsSync(path.join(__dirname, "www", "vendor", "math.js"))) require("./scripts/vendor.js");
+// www/vendor is generated (math.js and about.json with the version and licenses). Always refresh it so a stale
+// copy from an earlier version can't make the tests pass or fail for the wrong reason.
+require("./scripts/vendor.js");
 const read = (...p) => fs.readFileSync(path.join(__dirname, ...p), "utf8");
 const INDEX = read("www", "index.html");
 const SCRIPTS = [...INDEX.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]);
