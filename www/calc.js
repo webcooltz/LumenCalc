@@ -102,7 +102,11 @@
     if (v.isNode) return v.toString();
     if (v.isResultSet) return v.entries.map(format).join(", ");
     if (typeof v === "function") return v.syntax || "function defined";
-    return math.format(v, { precision: 12 });
+    // Whole numbers that JS holds exactly print every digit (2^40 = 1099511627776, not rounded to 12 digits).
+    if (Number.isSafeInteger(v)) return String(v);
+    // Otherwise 14 significant digits hides float noise (0.1+0.2 -> 0.3). mathjs defaults to exponent form
+    // from 1e5 (120000 -> 1.2e+5), so push that out to 1e15.
+    return math.format(v, { precision: 14, lowerExp: -6, upperExp: 15 });
   }
 
   function storable(v) {

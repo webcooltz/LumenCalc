@@ -14,11 +14,21 @@ assert.strictEqual(ev("2^3^2"), "512");                // right-associative
 assert.strictEqual(ev("-2^2"), "-4");
 assert.strictEqual(ev("0.1+0.2"), "0.3");
 assert.strictEqual(ev("5!"), "120");
+assert.strictEqual(ev("100*100*12"), "120000");        // no 1.2e+5
+assert.strictEqual(ev("2^40"), "1099511627776");
+assert.strictEqual(ev("123456789*1000"), "123456789000");
+assert.strictEqual(ev("9007199254740991"), "9007199254740991"); // largest exact integer
+assert.strictEqual(ev("-2^40"), "-1099511627776");
+assert.strictEqual(ev("1/3"), "0.33333333333333");
+assert.strictEqual(ev("0.000001"), "0.000001");
+assert.strictEqual(ev("123456.789"), "123456.789");
+assert.strictEqual(ev("2^60"), "1.1529215046068e+18");   // too big to be exact: exponent form
+assert.strictEqual(ev("[100000, 2]"), "[100000, 2]");
 assert.strictEqual(ev("10 mod 3"), "1");
 assert.strictEqual(ev("(2+3"), "5");                   // unclosed paren auto-closes
 assert.strictEqual(ev("6×7÷2−1"), "20");               // keypad symbols
 assert.strictEqual(ev("√16"), "4");
-assert.strictEqual(ev("2π"), "6.28318530718");
+assert.strictEqual(ev("2π"), "6.2831853071796");
 
 // Functions, constants
 assert.strictEqual(ev("sqrt(16)"), "4");
