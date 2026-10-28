@@ -42,9 +42,12 @@ function moveCaret(delta) {
 function refresh() {
   preview.classList.remove("error");
   const v = input.value.trim();
-  if (!v) { preview.textContent = ""; return; }
+  if (!v) { preview.textContent = ""; preview.classList.remove("tap"); return; }
   const r = Calc.evaluate(v, new Map(scope), mode); // copy: previewing must not change state
-  preview.textContent = r.ok && r.text && r.text !== v ? "= " + Calc.group(r.text) : "";
+  const show = r.ok && r.text && r.text !== v;
+  // There is no = key: tapping the live result (or pressing Enter) saves it to the history.
+  preview.textContent = show ? "= " + Calc.group(r.text) + "  ↵" : "";
+  preview.classList.toggle("tap", !!show);
 }
 
 function equals() {
@@ -132,6 +135,9 @@ function toggleKeyboard() {
   input.blur();
   input.focus();
 }
+
+preview.addEventListener("mousedown", (e) => e.preventDefault()); // keep the caret in the input
+preview.addEventListener("click", () => { if (preview.classList.contains("tap")) equals(); });
 
 input.addEventListener("input", refresh);
 input.addEventListener("keydown", (e) => {
