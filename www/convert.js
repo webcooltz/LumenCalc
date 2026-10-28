@@ -63,8 +63,8 @@
       return;
     }
     const from = fromEl.value, to = toEl.value;
-    resultEl.textContent = Units.format(Units.convert(v, from, to));
-    noteEl.textContent = "1 " + Units.symbol(from) + " = " + Units.format(Units.convert(1, from, to)) + " " + Units.symbol(to);
+    resultEl.textContent = Calc.group(Units.format(Units.convert(v, from, to)));
+    noteEl.textContent = "1 " + Units.symbol(from) + " = " + Calc.group(Units.format(Units.convert(1, from, to))) + " " + Units.symbol(to);
   }
 
   fromEl.addEventListener("change", () => { fillTo(toEl.value); update(); });

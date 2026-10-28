@@ -40,6 +40,19 @@ assert.strictEqual(ev("sin(90)", "deg"), "1");
 assert.strictEqual(ev("asin(1)", "deg"), "90");
 assert.strictEqual(ev("sqrt(-4)"), "2i");
 
+// Thousands separators (display only)
+assert.strictEqual(C.group("120000"), "120,000");
+assert.strictEqual(C.group("999"), "999");
+assert.strictEqual(C.group("1000"), "1,000");
+assert.strictEqual(C.group("-1099511627776"), "-1,099,511,627,776");
+assert.strictEqual(C.group("1234.5678"), "1,234.5678");
+assert.strictEqual(C.group("0.33333333333333"), "0.33333333333333");
+assert.strictEqual(C.group("1.2e+5"), "1.2e+5");
+assert.strictEqual(C.group("[100000, 2]"), "[100000, 2]");
+assert.strictEqual(C.group("2 + 3i"), "2 + 3i");
+assert.strictEqual(C.group(""), "");
+assert.strictEqual(ev("100*100*12"), "120000"); // evaluate itself stays plain so results can be reused in expressions
+
 // Errors
 assert.ok(ev("2+*").startsWith("ERR"));
 assert.ok(ev("foo(1)").startsWith("ERR"));

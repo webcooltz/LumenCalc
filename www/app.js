@@ -44,7 +44,7 @@ function refresh() {
   const v = input.value.trim();
   if (!v) { preview.textContent = ""; return; }
   const r = Calc.evaluate(v, new Map(scope), mode); // copy: previewing must not change state
-  preview.textContent = r.ok && r.text && r.text !== v ? "= " + r.text : "";
+  preview.textContent = r.ok && r.text && r.text !== v ? "= " + Calc.group(r.text) : "";
 }
 
 function equals() {
@@ -76,7 +76,7 @@ function renderHistory() {
       ex.addEventListener("click", () => insert(h.expr));
       const res = document.createElement("div");
       res.className = "res";
-      res.textContent = "= " + h.text;
+      res.textContent = "= " + Calc.group(h.text); // shown with commas; tapping inserts the plain h.text
       res.title = "Tap to insert result";
       res.addEventListener("click", () => insert(h.text));
       row.append(ex, res);

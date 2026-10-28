@@ -124,7 +124,15 @@
     }
   }
 
-  const api = { evaluate, normalize, format };
+  // Display only: 1234567.89 -> 1,234,567.89. Lists, exponent form and complex numbers are left alone,
+  // since a comma inside [1, 2] already means something. Never feed the grouped text back into an expression.
+  function group(text) {
+    const m = /^(-?)(\d{4,})(\.\d+)?$/.exec(text);
+    if (!m) return text;
+    return m[1] + m[2].replace(/\B(?=(\d{3})+$)/g, ",") + (m[3] || "");
+  }
+
+  const api = { evaluate, normalize, format, group };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Calc = api;
 })(typeof window !== "undefined" ? window : globalThis);
