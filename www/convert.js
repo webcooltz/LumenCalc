@@ -53,7 +53,63 @@
     return r.ok && typeof r.value === "number" ? r.value : null;
   }
 
+  // ---- favorites: saved from/to pairs, newest first, shown as chips at the top ----
+  const favsEl = document.getElementById("conv-favs");
+  const starEl = document.getElementById("conv-star");
+
+  const validPair = (f) =>
+    f && typeof f.from === "string" && typeof f.to === "string" && Units.compatible(f.from).some((u) => u[0] === f.to);
+
+  function loadFavs() {
+    try {
+      const list = JSON.parse(store("convFavs") || "[]");
+      return Array.isArray(list) ? list.filter(validPair).map((f) => ({ from: f.from, to: f.to })) : [];
+    } catch (e) { return []; }
+  }
+
+  let favs = loadFavs();
+  const samePair = (f, from, to) => f.from === from && f.to === to;
+  const isFav = () => favs.some((f) => samePair(f, fromEl.value, toEl.value));
+
+  function toggleFav() {
+    const from = fromEl.value, to = toEl.value;
+    favs = isFav() ? favs.filter((f) => !samePair(f, from, to)) : [{ from, to }, ...favs];
+    store("convFavs", JSON.stringify(favs));
+    renderFavs();
+  }
+
+  function renderFavs() {
+    const fav = isFav();
+    const label = fav ? "Remove from favorites" : "Add to favorites";
+    starEl.textContent = fav ? "★" : "☆";
+    starEl.classList.toggle("on", fav);
+    starEl.setAttribute("aria-pressed", String(fav));
+    starEl.setAttribute("aria-label", label);
+    starEl.title = label;
+
+    if (!favs.length) {
+      const hint = document.createElement("p");
+      hint.className = "fav-empty";
+      hint.textContent = "Tap ☆ to save a conversion here for quick access.";
+      favsEl.replaceChildren(hint);
+      return;
+    }
+    favsEl.replaceChildren(
+      ...favs.map((f) => {
+        const b = document.createElement("button");
+        b.className = "fav" + (samePair(f, fromEl.value, toEl.value) ? " current" : "");
+        b.textContent = Units.symbol(f.from) + " → " + Units.symbol(f.to);
+        b.title = Units.name(f.from) + " to " + Units.name(f.to);
+        b.addEventListener("click", () => { fromEl.value = f.from; fillTo(f.to); update(); }); // keeps the typed value
+        return b;
+      })
+    );
+  }
+
+  starEl.addEventListener("click", toggleFav);
+
   function update() {
+    renderFavs();
     store("conv", JSON.stringify({ from: fromEl.value, to: toEl.value, value: valueEl.value }));
     const v = parseValue();
     valueEl.classList.toggle("bad", v === null && valueEl.value.trim() !== "");

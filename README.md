@@ -17,7 +17,7 @@ A calculator for Android and the browser, built with plain HTML, CSS and JavaScr
 ## What it does
 
 - **Calculator.** Type full expressions with parentheses: `2(3+4)^2`, `5!`, `sqrt(16)`, `sin(pi/2)`. Variables (`x = 5`), your own functions (`f(t) = t^2 + 1`) and `ans`. Algebra with `simplify(2x+3x)`, `derivative(x^3, x)` and `solve(x^2-4=0, x)` (polynomials up to degree 3). Radians or degrees.
-- **Unit converter.** Length, mass, temperature, volume, area, speed, time, data, energy, power, pressure and angle. Pick a unit and the "to" list only offers compatible units.
+- **Unit converter.** Length, mass, temperature, volume, area, speed, time, data, energy, power, pressure and angle. Pick a unit and the "to" list only offers compatible units. Tap the star to save a conversion to a favorites list at the top of the page.
 - **Code.** A JavaScript scratchpad that runs in a sandboxed worker with a 5 second limit. Save and open files in a `LumenCalc` folder.
 - **Settings.** Choose the save folder, version info, privacy policy and open source licenses.
 
@@ -54,7 +54,17 @@ The APK lands in `android/app/build/outputs/apk/debug/`. On Android, saved code 
 npm test
 ```
 
-Covers the expression engine, unit conversions and the file storage backends.
+Five suites, no test framework needed:
+
+| File | Covers |
+| --- | --- |
+| `test.js` | Expression engine: precedence, functions, algebra, number formatting |
+| `test-units.js` | Unit conversions, including every unit pair round-tripping |
+| `test-files.js` | Save/open storage backends (folder, Android, download) |
+| `test-ui.js` | The real `index.html` driven in jsdom: keypad, menu, converter and favorites, Code view, Save/Open and Settings on all three storage backends |
+| `test-release.js` | Release hygiene: one version everywhere, no garbled text, every script and menu entry wired up |
+
+The Android file API is mocked to match the real bridge, which was checked on an emulator.
 
 ## Layout
 

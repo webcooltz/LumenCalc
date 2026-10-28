@@ -55,7 +55,8 @@
 
   // ---- make sure there is a folder to work in, then run `action` ----
   async function withFolder(action) {
-    const b = getBackend();
+    let b;
+    try { b = getBackend(); } catch (e) { toast("Saving isn't available: " + (e && e.message ? e.message : e)); return; }
     let state;
     try { state = await b.status(); } catch (e) { state = "needs-setup"; }
     if (state === "ready") return action();
@@ -148,7 +149,8 @@
   const discardOk = () => !dirty || confirm("Discard unsaved changes?");
 
   function open() {
-    const b = getBackend();
+    let b;
+    try { b = getBackend(); } catch (e) { toast("Opening files isn't available: " + (e && e.message ? e.message : e)); return; }
     if (!b.list) { pickOther(); return; } // download backend has no folder to show
     withFolder(openSheet);
   }

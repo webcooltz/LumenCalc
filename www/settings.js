@@ -14,7 +14,15 @@
 
   // ---- save folder ----
   async function renderFolder() {
-    const b = CodeFiles.getBackend();
+    folderBtn.hidden = true;
+    let b;
+    try {
+      b = CodeFiles.getBackend();
+    } catch (e) { // never leave the card on "Checking…"
+      folderText.textContent = "Saving isn't available";
+      folderNote.textContent = (e && e.message ? e.message : String(e));
+      return;
+    }
     let state;
     try { state = await b.status(); } catch (e) { state = "needs-setup"; }
 

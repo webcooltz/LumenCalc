@@ -147,9 +147,10 @@ button.icon:active { background: var(--key); }
 
 .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 
-.caret-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+/* TODO(remove): this row used to hold ◀ ⌨ ▶. The arrows are commented out in index.html; once they are
+   deleted for good, this can shrink to a single full-width keyboard button. */
+.caret-row { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
 .caret-row button { height: 34px; border-radius: 10px; font-size: 1rem; }
-.caret-row button.on { background: var(--op); color: #1a1100; }
 
 /* ---------- Unit converter ---------- */
 .convert { gap: 10px; padding-top: 8px; }
@@ -195,7 +196,15 @@ select {
   font-size: 1rem;
 }
 
-.swap { align-self: center; width: 52px; height: 40px; border-radius: 20px; background: var(--fn); font-size: 1.3rem; margin: -4px 0; }
+.swap-row { display: flex; justify-content: center; gap: 10px; margin: -4px 0; }
+.swap { width: 52px; height: 40px; border-radius: 20px; background: var(--fn); font-size: 1.3rem; }
+.swap.star.on { background: var(--op); color: #1a1100; }
+
+.favs h2 { margin: 0 0 6px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.fav-list { display: flex; flex-wrap: wrap; gap: 6px; }
+button.fav { height: 34px; padding: 0 12px; border-radius: 17px; font-size: 0.95rem; background: var(--key); }
+button.fav.current { background: var(--fn); box-shadow: inset 0 0 0 1.5px var(--op); }
+.fav-empty { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
 .conv-note { color: var(--muted); text-align: center; font-size: 0.95rem; min-height: 1.4rem; }
 
 /* ---------- Code ---------- */

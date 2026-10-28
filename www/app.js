@@ -34,10 +34,12 @@ function backspace() {
   refresh();
 }
 
-function moveCaret(delta) {
-  const p = Math.max(0, Math.min(input.value.length, input.selectionStart + delta));
-  input.setSelectionRange(p, p);
-}
+// TODO(remove): the ◀ ▶ caret buttons are commented out in index.html (touch the input to move the caret).
+// Delete this function and the commented handlers below once we're sure we don't want the buttons back.
+// function moveCaret(delta) {
+//   const p = Math.max(0, Math.min(input.value.length, input.selectionStart + delta));
+//   input.setSelectionRange(p, p);
+// }
 
 function refresh() {
   preview.classList.remove("error");
@@ -114,11 +116,15 @@ calcView.addEventListener("click", (e) => {
   else if (b.dataset.action === "equals") equals();
   else if (b.dataset.action === "back") backspace();
   else if (b.dataset.action === "clear") clearAll();
-  else if (b.dataset.action === "left") moveCaret(-1);
-  else if (b.dataset.action === "right") moveCaret(1);
-  else if (b.dataset.action === "keyboard") toggleKeyboard();
+  // TODO(remove): caret arrow buttons are commented out (see moveCaret above).
+  // else if (b.dataset.action === "left") moveCaret(-1);
+  // else if (b.dataset.action === "right") moveCaret(1);
+  else if (b.dataset.action === "keyboard") { showKeyboard(); return; }
   else if (b === angleBtn) setMode(mode === "rad" ? "deg" : "rad");
-  if (b !== kbdBtn) input.focus({ preventScroll: true });
+  // Using the keypad means the system keyboard is no longer wanted. Reset first, otherwise the focus() below
+  // would pop the keyboard up again after it was dismissed.
+  hideKeyboard();
+  input.focus({ preventScroll: true });
 });
 
 function setMode(m) {
@@ -128,13 +134,31 @@ function setMode(m) {
   refresh();
 }
 
-function toggleKeyboard() {
-  const on = input.inputMode === "none";
-  input.inputMode = on ? "text" : "none";
-  kbdBtn.classList.toggle("on", on);
+// The system keyboard is a one-shot: the keyboard button opens it, and once it is dismissed (or the keypad is
+// used again) the input goes back to inputmode="none" so nothing re-opens it. Not a toggle the user has to undo.
+let openingKeyboard = false;
+
+function showKeyboard() {
+  openingKeyboard = true; // the blur() below is ours, not the user leaving the field
+  input.setAttribute("inputmode", "text");
   input.blur();
-  input.focus();
+  input.focus(); // a focus() inside the button's tap is what makes Android show the keyboard
+  openingKeyboard = false;
 }
+
+function hideKeyboard() {
+  if (input.getAttribute("inputmode") !== "none") input.setAttribute("inputmode", "none");
+}
+
+input.addEventListener("blur", () => { if (!openingKeyboard) hideKeyboard(); });
+
+// Dismissing the keyboard (Back, swipe) leaves the field focused, but Android gives the page its full height
+// back, so a growing viewport means the keyboard is gone. Reset right then rather than on the next tap.
+let lastViewportHeight = window.innerHeight;
+window.addEventListener("resize", () => {
+  if (window.innerHeight > lastViewportHeight) hideKeyboard();
+  lastViewportHeight = window.innerHeight;
+});
 
 preview.addEventListener("mousedown", (e) => e.preventDefault()); // keep the caret in the input
 preview.addEventListener("click", () => { if (preview.classList.contains("tap")) equals(); });

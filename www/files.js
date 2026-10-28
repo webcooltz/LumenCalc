@@ -196,7 +196,10 @@
     win = win || root;
     const cap = win.Capacitor;
     if (cap && cap.isNativePlatform && cap.isNativePlatform()) {
-      return createNativeBackend({ fs: cap.registerPlugin("Filesystem"), store: lsStore() });
+      // The Android bridge lists its plugins under Capacitor.Plugins. It has no registerPlugin (that only
+      // exists when the plugin's own JS is bundled), so only fall back to it if the plugin is missing.
+      const fs = (cap.Plugins && cap.Plugins.Filesystem) || (cap.registerPlugin && cap.registerPlugin("Filesystem"));
+      if (fs) return createNativeBackend({ fs, store: lsStore() });
     }
     if (typeof win.showDirectoryPicker === "function") {
       return createFolderBackend({

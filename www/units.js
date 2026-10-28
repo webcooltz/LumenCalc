@@ -70,6 +70,14 @@
     sqft: "ft²", sqmi: "mi²", cm2: "cm²", m2: "m²", km2: "km²", m3: "m³", day: "d", week: "wk", year: "yr" };
   const symbol = (id) => SYMBOLS[id] || id;
 
+  function name(id) {
+    for (const c of CATEGORIES) {
+      const u = c.units.find((x) => x[0] === id);
+      if (u) return u[1];
+    }
+    return id;
+  }
+
   function categoryOf(id) {
     return CATEGORIES.find((c) => c.units.some((u) => u[0] === id));
   }
@@ -91,7 +99,7 @@
     return math.format(n, { precision: 10, lowerExp: -6, upperExp: 12 });
   }
 
-  const api = { CATEGORIES, categoryOf, compatible, convert, format, symbol };
+  const api = { CATEGORIES, categoryOf, compatible, convert, format, symbol, name };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Units = api;
 })(typeof window !== "undefined" ? window : globalThis);

@@ -1,5 +1,6 @@
 const assert = require("assert");
 const F = require("./www/files.js");
+const { fakeFile, fakeDir, memStore } = require("./test-fakes");
 
 // ---- sanitizeName ----
 assert.strictEqual(F.sanitizeName("fib"), "fib.js");
@@ -15,43 +16,6 @@ assert.strictEqual(F.sanitizeName(".hidden"), "hidden.js");
 assert.ok(F.sanitizeName("x".repeat(200)).length <= 80);
 assert.ok(F.sanitizeName("x".repeat(200)).endsWith(".js"));
 
-// ---- in-memory fake of the File System Access API ----
-function fakeDir(name) {
-  const kids = new Map(); // name -> {kind, handle|file}
-  const dir = {
-    kind: "directory", name, kids,
-    perm: "granted",
-    async queryPermission() { return dir.perm; },
-    async requestPermission() { return dir.perm === "denied" ? "denied" : (dir.perm = "granted"); },
-    async getDirectoryHandle(n, { create } = {}) {
-      if (!kids.has(n)) {
-        if (!create) throw new Error("NotFoundError");
-        kids.set(n, fakeDir(n));
-      }
-      return kids.get(n);
-    },
-    async getFileHandle(n, { create } = {}) {
-      if (!kids.has(n)) {
-        if (!create) throw new Error("NotFoundError");
-        kids.set(n, fakeFile(n));
-      }
-      return kids.get(n);
-    },
-    async *entries() { for (const [k, v] of kids) yield [k, v]; },
-  };
-  return dir;
-}
-let clock = 1000;
-function fakeFile(name) {
-  const f = { kind: "file", name, text: "", modified: clock++ };
-  f.getFile = async () => ({ text: async () => f.text, lastModified: f.modified, size: f.text.length });
-  f.createWritable = async () => {
-    let buf = "";
-    return { write: async (t) => { buf += t; }, close: async () => { f.text = buf; f.modified = clock++; } };
-  };
-  return f;
-}
-const memStore = () => { let v; return { get: async () => v, set: async (x) => { v = x; }, peek: () => v }; };
 
 (async () => {
   // ---- folder backend ----
@@ -154,10 +118,13 @@ const memStore = () => { let v; return { get: async () => v, set: async (x) => {
   // ---- detect picks the right backend ----
   assert.strictEqual(F.detect({}).kind, "download");
   assert.strictEqual(F.detect({ showDirectoryPicker() {}, indexedDB: {} }).kind, "folder");
-  assert.strictEqual(
-    F.detect({ Capacitor: { isNativePlatform: () => true, registerPlugin: () => ({}) } }).kind,
-    "native"
-  );
+  // The real Android bridge: plugins under Capacitor.Plugins, no registerPlugin (this crashed Save and Settings once).
+  assert.strictEqual(F.detect({ Capacitor: { isNativePlatform: () => true, Plugins: { Filesystem: {} } } }).kind, "native");
+  // A bundled-plugin setup that does have registerPlugin still works.
+  assert.strictEqual(F.detect({ Capacitor: { isNativePlatform: () => true, registerPlugin: () => ({}) } }).kind, "native");
+  // Native app without the Filesystem plugin: never throw, fall back to downloads.
+  assert.strictEqual(F.detect({ Capacitor: { isNativePlatform: () => true, Plugins: {} } }).kind, "download");
+  assert.strictEqual(F.detect({ Capacitor: { isNativePlatform: () => true } }).kind, "download");
 
   console.log("file tests passed");
 })().catch((e) => { console.error(e); process.exit(1); });

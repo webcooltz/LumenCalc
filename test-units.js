@@ -46,6 +46,12 @@ assert.throws(() => U.convert(1, "lb", "m"), /not compatible/);
 const all = U.CATEGORIES.flatMap((c) => c.units.map((u) => u[0]));
 assert.strictEqual(new Set(all).size, all.length);
 
+// Display names and symbols (used by the favorites chips)
+assert.strictEqual(U.name("lb"), "Pounds");
+assert.strictEqual(U.name("degC"), "Celsius");
+assert.strictEqual(U.name("nope"), "nope");
+assert.strictEqual(U.symbol("degF"), "°F");
+
 assert.strictEqual(U.format(2.2046226218488), "2.204622622");
 assert.strictEqual(U.format(0.1 + 0.2), "0.3");
 

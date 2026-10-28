@@ -88,15 +88,23 @@
         <button data-insert="+" class="op">+</button>
       </div>
 
+      <!-- TODO(remove): the ◀ ▶ caret buttons are commented out for now; touching the input moves the caret.
+           Once that's confirmed good, delete these two buttons, moveCaret()/the "left" and "right" handlers
+           in app.js, and the caret-row note in style.css. -->
       <div class="caret-row">
-        <button data-action="left" class="fn">◀</button>
-        <button data-action="keyboard" class="fn" id="kbd" title="Toggle system keyboard">⌨</button>
-        <button data-action="right" class="fn">▶</button>
+        <!-- <button data-action="left" class="fn" aria-label="Move caret left">◀</button> -->
+        <button data-action="keyboard" class="fn" id="kbd" title="Show the keyboard" aria-label="Show the keyboard">⌨</button>
+        <!-- <button data-action="right" class="fn" aria-label="Move caret right">▶</button> -->
       </div>
     </main>
 
     <!-- Unit converter -->
     <main id="view-convert" class="view convert" hidden>
+      <section class="favs" aria-label="Favorite conversions">
+        <h2>Favorites</h2>
+        <div id="conv-favs" class="fav-list"></div>
+      </section>
+
       <div class="conv-card">
         <label for="conv-value">From</label>
         <div class="conv-row">
@@ -107,7 +115,10 @@
         <select id="conv-from" aria-label="From unit"></select>
       </div>
 
-      <button id="conv-swap" class="swap" aria-label="Swap units">⇅</button>
+      <div class="swap-row">
+        <button id="conv-swap" class="swap" aria-label="Swap units">⇅</button>
+        <button id="conv-star" class="swap star" aria-pressed="false" aria-label="Add to favorites" title="Add to favorites">☆</button>
+      </div>
 
       <div class="conv-card">
         <label for="conv-to">To</label>
