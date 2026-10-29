@@ -166,7 +166,7 @@ button.icon:active { background: var(--key); }
 .conv-card label { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
 
 .conv-row { display: flex; gap: 8px; align-items: center; }
-#conv-value {
+#conv-value, .num-input {
   flex: 1;
   min-width: 0;
   background: transparent;
@@ -178,8 +178,8 @@ button.icon:active { background: var(--key); }
   font-size: 2rem;
   padding: 2px 0;
 }
-#conv-value:focus { border-bottom-color: var(--op); }
-#conv-value.bad { color: var(--error); }
+#conv-value:focus, .num-input:focus { border-bottom-color: var(--op); }
+#conv-value.bad, .num-input.bad { color: var(--error); }
 .conv-row button { width: 44px; height: 40px; font-size: 1.1rem; }
 
 .conv-result { font-size: 2rem; min-height: 2.8rem; padding: 2px 0; word-break: break-all; }

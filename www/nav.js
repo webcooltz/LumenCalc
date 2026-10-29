@@ -1,6 +1,6 @@
 // Hamburger menu and view switching. Add a view: a <main id="view-NAME"> plus an entry here and a drawer button.
 (function () {
-  const VIEWS = { calc: "Calculator", convert: "Unit Converter", code: "Code", settings: "Settings" };
+  const VIEWS = { calc: "Calculator", convert: "Unit Converter", inflation: "Inflation", code: "Code", settings: "Settings" };
 
   const drawer = document.getElementById("drawer");
   const menuBtn = document.getElementById("menu-btn");

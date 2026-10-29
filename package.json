@@ -1,9 +1,9 @@
 {
   "name": "lumencalc",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "LumenCalc: calculator, unit converter and code scratchpad. Web app wrapped for Android with Capacitor.",
   "scripts": {
-    "test": "node test.js && node test-units.js && node test-files.js && node test-ui.js && node test-release.js",
+    "test": "node test.js && node test-units.js && node test-inflation.js && node test-files.js && node test-ui.js && node test-release.js",
     "android:add": "cap add android",
     "android:sync": "cap sync android",
     "android:open": "cap open android",

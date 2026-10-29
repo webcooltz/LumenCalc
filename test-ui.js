@@ -415,6 +415,105 @@ test("favorites are remembered between sessions and bad saved data is ignored", 
 });
 
 // =========================== Code view ===========================
+// =========================== Inflation ===========================
+const inflate = (a, id, value) => { a.$(id).value = value; a.$(id).dispatchEvent(new a.w.Event(id === "inf-mode" || id === "inf-from" || id === "inf-to" ? "change" : "input", { bubbles: true })); };
+
+test("inflation: opens from the menu and starts with 100 dollars from 2000 to the latest year", async () => {
+  const a = await boot();
+  await a.go("inflation");
+  assert.strictEqual(a.$("title").textContent, "Inflation");
+  assert.ok(!a.$("view-inflation").hidden && a.$("view-calc").hidden);
+  assert.strictEqual(a.$("inf-amount").value, "100");
+  assert.strictEqual(a.$("inf-from").value, "2000");
+  assert.strictEqual(a.$("inf-to").value, "2024");
+  assert.strictEqual(a.$("inf-result").textContent, "$182.17"); // 100 * 313.689 / 172.2 = 182.17
+  assert.ok(/Prices \+82\.2% in total, about \+2\.5\d% a year/.test(a.$("inf-note").textContent), a.$("inf-note").textContent);
+  a.close();
+});
+
+test("inflation: years list newest first and covers every year of data", async () => {
+  const a = await boot();
+  const years = [...a.$("inf-from").options].map((o) => +o.value);
+  assert.strictEqual(years[0], 2024);
+  assert.strictEqual(years[years.length - 1], 1913);
+  assert.strictEqual(years.length, 112);
+  a.close();
+});
+
+test("inflation: changing the amount or years updates the result; commas for big numbers", async () => {
+  const a = await boot();
+  await a.go("inflation");
+  inflate(a, "inf-amount", "1000000");
+  inflate(a, "inf-from", "1990");
+  assert.ok(/^\$2,400,\d{3}\.\d\d$/.test(a.$("inf-result").textContent), a.$("inf-result").textContent);
+  inflate(a, "inf-amount", "2*50"); // expressions work, like the converter
+  assert.ok(a.$("inf-result").textContent.startsWith("$240."), a.$("inf-result").textContent);
+  a.close();
+});
+
+test("inflation: swap flips the years; going back in time shows prices down", async () => {
+  const a = await boot();
+  await a.go("inflation");
+  a.$("inf-swap").click();
+  assert.strictEqual(a.$("inf-from").value, "2024");
+  assert.strictEqual(a.$("inf-to").value, "2000");
+  assert.strictEqual(a.$("inf-result").textContent, "$54.90"); // 100 * 172.2 / 313.689
+  assert.ok(a.$("inf-note").textContent.includes("−"), a.$("inf-note").textContent);
+  a.close();
+});
+
+test("inflation: bad input flags the field and blanks the result instead of showing NaN", async () => {
+  const a = await boot();
+  await a.go("inflation");
+  inflate(a, "inf-amount", "abc");
+  assert.ok(a.$("inf-amount").classList.contains("bad"));
+  assert.strictEqual(a.$("inf-result").textContent, "—");
+  assert.strictEqual(a.$("inf-note").textContent, "");
+  inflate(a, "inf-amount", "");
+  assert.ok(!a.$("inf-amount").classList.contains("bad"));
+  assert.strictEqual(a.$("inf-result").textContent, "—");
+  inflate(a, "inf-amount", "50");
+  assert.strictEqual(a.$("inf-result").textContent, "$91.08");
+  a.close();
+});
+
+test("inflation: steady-rate mode swaps the year pickers for rate and years", async () => {
+  const a = await boot();
+  await a.go("inflation");
+  const cpiParts = () => [...a.w.document.querySelectorAll("#view-inflation [data-mode=cpi]")].every((e) => !e.hidden);
+  const rateParts = () => [...a.w.document.querySelectorAll("#view-inflation [data-mode=rate]")].every((e) => !e.hidden);
+  assert.ok(cpiParts() && !rateParts());
+  inflate(a, "inf-mode", "rate");
+  assert.ok(!cpiParts() && rateParts());
+  // 100 at 3% for 10 years
+  assert.strictEqual(a.$("inf-result").textContent, "134.39");
+  assert.strictEqual(a.$("inf-note").textContent, "Total change +34.4%");
+  inflate(a, "inf-rate", "-2");
+  inflate(a, "inf-years", "5");
+  assert.strictEqual(a.$("inf-result").textContent, "90.39");
+  assert.ok(a.$("inf-note").textContent.includes("−9.6%"), a.$("inf-note").textContent);
+  inflate(a, "inf-rate", "-100"); // would zero everything out, so don't show a result
+  assert.strictEqual(a.$("inf-result").textContent, "—");
+  inflate(a, "inf-rate", "x");
+  assert.ok(a.$("inf-rate").classList.contains("bad"));
+  a.close();
+});
+
+test("inflation: settings are remembered between sessions; bad saved data falls back to defaults", async () => {
+  const a = await boot({ seed: { "calc.inflation": JSON.stringify({ mode: "rate", amount: "20", from: "1990", to: "2010", rate: "4", years: "3" }) } });
+  assert.strictEqual(a.$("inf-mode").value, "rate");
+  assert.strictEqual(a.$("inf-result").textContent, "22.50"); // 20 * 1.04^3
+  a.close();
+  const b = await boot({ seed: { "calc.inflation": JSON.stringify({ mode: "nope", from: "1800", to: "oops" }) } });
+  assert.strictEqual(b.$("inf-mode").value, "cpi");
+  assert.strictEqual(b.$("inf-from").value, "2000");
+  assert.strictEqual(b.$("inf-to").value, "2024");
+  b.close();
+  const c = await boot({ seed: { "calc.inflation": "{not json" } });
+  assert.strictEqual(c.$("inf-result").textContent, "$182.17");
+  c.close();
+});
+
 test("Code: Run prints output and the result of the last expression", async () => {
   const a = await boot();
   await a.go("code");
@@ -682,7 +781,7 @@ test("Settings: version, privacy policy and open source libraries", async () => 
       console.log("  ok   " + name);
     } catch (e) {
       failed++;
-      console.log("  FAIL " + name + "\n       " + String(e && e.message ? e.message : e).split("\n")[0]);
+      console.log("  FAIL " + name + "\n       " + String(e && e.message ? e.message : e).split("\n").slice(0, 4).join(" | "));
     }
   }
   console.log(failed ? `${failed} of ${tests.length} UI tests failed` : `ui tests passed (${tests.length})`);
