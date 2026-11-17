@@ -67,6 +67,7 @@ button.icon:active { background: var(--key); }
   flex-direction: column;
   gap: 6px;
   padding: 0 12px calc(10px + env(safe-area-inset-bottom));
+  overflow-y: auto; /* short screens: scroll instead of clipping */
 }
 
 /* ---------- Drawer ---------- */
@@ -345,3 +346,23 @@ pre.license { margin: 8px 0 0; max-height: 220px; overflow: auto; background: #0
 /* The live result doubles as the save button (there is no = key). */
 .preview.tap { color: var(--text); cursor: pointer; }
 .preview.tap:active { color: var(--op); }
+
+/* ---------- Landscape phones: keypad beside the entry area instead of below it ---------- */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app { max-width: 900px; }
+  .calc {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto auto auto;
+    grid-template-areas: "hist keys" "entry keys" "chips keys" "chips caret";
+    column-gap: 12px;
+    row-gap: 4px;
+    overflow: hidden;
+  }
+  .calc .history { grid-area: hist; }
+  .calc .entry { grid-area: entry; }
+  .calc .chips { grid-area: chips; align-content: flex-start; }
+  .calc .keys { grid-area: keys; align-self: stretch; grid-auto-rows: 1fr; }
+  .calc .caret-row { grid-area: caret; }
+  .calc .keys button { height: auto; min-height: 0; font-size: 1.2rem; }
+}

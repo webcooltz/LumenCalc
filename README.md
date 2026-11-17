@@ -6,7 +6,7 @@
 
 A calculator for Android and the browser, built with plain HTML, CSS and JavaScript and wrapped for Android with [Capacitor](https://capacitorjs.com).
 
-**Version 0.1.3.** Early release. The web app is tested in the browser; the Android build, including saving files to `Documents/LumenCalc`, has not been tested on a real device yet.
+**Version 0.1.4.** Early release. The web app is tested in the browser; the Android build, including saving files to `Documents/LumenCalc`, has not been tested on a real device yet.
 
 | Calculator | Unit converter | Code | Settings |
 | :---: | :---: | :---: | :---: |
